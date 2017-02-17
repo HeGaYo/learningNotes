@@ -35,7 +35,7 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 	"product name":"vmware",
 	…
 	"uuid":"df2dfkja435jfl90"
-}
+    }
 json_str = json.dumps(d)r.set('dmi_info', json_str)
 json_str1 = r.get(’dmi_info')
 
