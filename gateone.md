@@ -84,10 +84,32 @@ doc for web-ssh：GateOne
 >##### 5.gateone免密码登录(autologin)
 >其实gateone的url可以变为`https://ip_addr:port/?ssh=ssh://hostname@host_ipaddr`,这样只需要输入密码即可通过SSH访问其他主机。但还是不方便，如果有很多台主机，还要记住一堆主机的密码...
 
-> 5.1 SSH 免密码登录 具体的操作步骤就不提了
+> 5.1 SSH 免密码登录
 >
-> 5.2 将id_rsa写入到.default_ids里，形成对应关系
+>```
+>ssh-keygen -t rsa
+>cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+>ssh vinzor@172.18.229.251 cat /home/vinzor/.ssh/authorized_keys >> ~/.ssh/authorized_keys
+>scp ~/.ssh/authorized_keys >vinzor@172.18.229.251:~/.ssh/authorized_keys
+>sudo chmod 755 .ssh 和 chmod 644 authorized_keys
+>```
+>* 可能报错：Agent admitted failure to sign using the key 问题 with ssh
+>
+>  解决方案：```$ ssh-add ~/.ssh/id_rsa```
+>
+> 5.2 将`id_rsa`写入到`.default_ids`里，形成对应关系
 >```
 >echo id_rsa > /var/lib/gateone/user/ANOUNYOUS/.ssh/.default_ids
 >```
 > 5.3 修改`GateOne.init`函数，添加参数`autoconnect_url`
+>```
+> GateOne.init({ url:'https://127.0.0.1:port', disableTermTransitions:true, showTitle:false, showToolbar:false, fillContainer:true, autoConnectURL:'ssh://hostname@ip_addr' }); } document.body.appendChild(scriptTag); </script>
+>```
+
+
+
+参考网址：
+http://liftoff.github.io/GateOne/Developer/index.html#embeddeding-gate-one-into-other-applications
+http://www.cnblogs.com/lienhua34/p/4876300.html
+http://www.cnblogs.com/lienhua34/p/4884115.html
+https://github.com/liftoff/GateOne/issues/591
