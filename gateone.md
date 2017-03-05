@@ -110,6 +110,9 @@ doc for web-ssh：GateOne
 
 参考网址：
 http://liftoff.github.io/GateOne/Developer/index.html#embeddeding-gate-one-into-other-applications
+
 http://www.cnblogs.com/lienhua34/p/4876300.html
+
 http://www.cnblogs.com/lienhua34/p/4884115.html
+
 https://github.com/liftoff/GateOne/issues/591
