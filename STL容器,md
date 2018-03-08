@@ -1,0 +1,505 @@
+# STL标准模板库
+
+容器类自动申请和释放内存，因此无需new和delete操作。
+## 容器分类
+- 序列式容器：
+  - 元素可以是有序的，也可以是无序的。区别在于访问元素的方式，以及添加或删除元素相关操作的运行代价。
+  - vector和deque支持随机访问。list支持双向访问。
+  - 类别:
+    - vector：从**后面**快速插入和删除，可以访问任意元素
+    - deque：从**后面**或者**前面**快速插入和删除，直接访问任何元素
+    - list：双链表，从**任何地方**快速插入和删除，不可直接访问元素
+
+
+- 关联式容器：
+  - 每项元素包含一个键值和一个实值。当元素插入的时候，容器内部数据结构便按照键值的大小，按照某种特定规则将该元素放置到适当的位置。
+  - 支持双向访问。
+  - 类别:
+    - set：**快速查找**，不允许重复值
+    - multiset：快速查找，**允许重复值**
+    - map：**一对多的映射**，基于关键词快速查找，不允许重复值
+    - multimap：一对多的映射，基于关键词快速查找，**允许重复值**
+
+- 容器适配器：不支持随机访问，不支持双向访问
+  - stack: 先进后出
+  - queue：先进先出
+  - priority_queue：最高优先级的总是第一个出列
+
+## 迭代器
+迭代器是一种检查容器内元素并遍历元素的数据类型。提供类似指针的功能，对容器的内容进行走访。
+迭代器的范围：[iter1, iter2）左闭右合的区间。当iter1==iter2时，区间范围为空
+
+```
+//迭代器为所有的容器提供的运算
+vector<int>iterator:: iter
+vec.begin()
+vec.end()
+*iter
+iter->mem 等价于 (*iter).mem
+++iter, iter++
+--iter, iter--
+iter1 == iter2
+iter1 != iter2
+
+```
+
+```
+//迭代器为vector和deque提供的额外运算(容器支持随机访问)
+iter+n
+iter - n
+iter1 += iter2
+iter -=iter2
+>,>=,<,<=
+```
+
+## 各个容器的使用
+
+###vector矢量
+
+**操作**
+|操作|描述|
+|---|---|
+|push_back(i)|插入数据i|
+|erase(t1, t2)|移除数据,区间为[t1, t2)|
+|insert(old_t1, new_t1, new_t2)|在old_t1处插入数据[new_t1,new_t2]之间的数据|
+|begin()|返回一个指向容器中第一个元素的迭代器|
+|end()|返回一个超过容器尾的迭代器，一个超出结尾的位置|
+|size()|返回容器中元素的数目|
+|swap()|交换两个容器的内容|
+|for_each(t1, t2, func)|可代替for循环，要求容器类允许随机访问|
+|random_shuffle|随机排序|
+|sort|排序，可以通过传入函数comp或者重载operator<来定义比较的方式，要求容器类允许随机访问|
+**实例1**
+```
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+//Vector作为函数的参数或者返回值时,'&'不可少
+void printVec1(vector<int>&vec){
+	//利用index来访问vector
+	int size = vec.size();
+	for(int i=0;i<size;i++)
+	{
+		cout<<vec[i]<<" ";
+	}
+	cout<<endl;
+}
+void printVec2(vector<int>&vec){
+	//利用迭代器来访问vector
+	vector<int>::iterator it;
+	for(it=vec.begin();it!=vec.end();it++){
+		cout<<*it<<" ";
+	}
+	cout<<endl;
+}
+bool comp(int a, int b){
+	if(a>b){
+		return a;
+	}
+	return b;
+}
+//构建结构体
+struct RECT{
+	int length;
+	int width;
+	int area;
+};
+
+int main(){
+	vector<int> vec;
+	//在vector尾部插入数据
+	vec.push_back(1);
+	vec.push_back(3);
+	vec.push_back(8);
+	//获取vector的大小
+	printVec1(vec);
+	//在某个位置插入数据
+	vec.insert(vec.begin()+3,2);
+	//在某个位置删除数据
+	vec.erase(vec.begin()+2);
+	printVec2(vec);
+
+	//升序排列
+	sort(vec.begin(),vec.end());
+	printVec1(vec);
+	//降序排列
+	sort(vec.begin(),vec.end(),comp);
+	printVec1(vec);
+	//逆序
+	reverse(vec.begin(),vec.end());
+	printVec1(vec);
+
+	//vector清空
+	vec.clear();
+	cout<<vec.size()<<endl;
+
+	//定义并初始化一个二维的vector
+	vector<vector<int> > newOne(2, vector<int>(2, 0));
+	for(int i=0;i<2;i++){
+		for(int j=0;j<2;j++){
+			cout<<newOne[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	//构造一个vector<type>矢量
+	vector<RECT> rectangle;
+	RECT r1;
+	r1.area = 100;
+	r1.length = 10;
+	r1.width = 10;
+	rectangle.push_back(r1);
+	vector<RECT>::iterator it=rectangle.begin();  
+    cout<<(*it).area<<' '<<(*it).length<<' '<<(*it).width<<endl;
+
+    cout<<rectangle[0].area<<" "<<rectangle[0].length<<" "<<rectangle[0].width<<endl;
+	return 0;
+}
+```
+![这里写图片描述](http://img.blog.csdn.net/20180306201627561?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+**实例2**
+```
+ #include<iostream>
+ #include<vector>
+ #include<algorithm>
+ #include<cstdio>
+
+ using namespace std;
+ struct BOOK{
+ 	string title;
+ 	int rank1;
+ 	int rank2;
+ };
+bool operator<(const BOOK &bk1, const BOOK &bk2){
+ 	if(bk1.rank1<bk2.rank1){
+ 		return true;
+	 }
+	 else if(bk1.rank1 == bk2.rank1 && bk1.rank2<bk2.rank2){
+	 	return true;
+	 }
+	 else{
+	 	return false;
+	 }
+ }
+ bool comp(const BOOK &bk1, const BOOK &bk2){
+ 	if(bk1.rank1<bk2.rank1){
+ 		return true;
+	 }
+	 else{
+	 	return false;
+	 }
+ }
+ void printVec(const BOOK &bk){
+ 	cout<<bk.title<<" "<<bk.rank1<<" "<<bk.rank2<<endl;
+ }
+ int main(){
+ 	vector<BOOK> books;
+ 	BOOK bk;
+ 	bk.title ="a";
+ 	bk.rank1 = 9;
+ 	bk.rank2 = 7;
+ 	books.push_back(bk);
+ 	bk.title ="b";
+ 	bk.rank1 = 5;
+ 	bk.rank2 = 3;
+ 	books.push_back(bk);
+ 	bk.title ="c";
+ 	bk.rank1 = 5;
+ 	bk.rank2 = 4;
+ 	books.push_back(bk);
+ 	bk.title ="d";
+ 	bk.rank1 = 5;
+ 	bk.rank2 = 1;
+ 	books.push_back(bk);
+ 	cout<<"-------初始状态-------------"<<endl;
+ 	for_each(books.begin(),books.end(), printVec);
+ 	cout<<"-------函数调用-------------"<<endl;
+	sort(books.begin(),books.end(),comp);
+ 	for_each(books.begin(),books.end(), printVec);
+ 	cout<<"-------重载operator<-----------"<<endl;
+ 	sort(books.begin(),books.end());
+ 	for_each(books.begin(),books.end(), printVec);
+ 	cout<<"-------随机打乱顺序-----------"<<endl;
+ 	random_shuffle(books.begin(),books.end());
+ 	for_each(books.begin(),books.end(), printVec);
+
+
+ 	return 0;
+ }
+```
+![这里写图片描述](http://img.blog.csdn.net/20180306201554864?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+###list列表
+**###操作**
+|操作|描述|
+|---|---|
+|insert(old_it,new_it1, new_it2)|在old_it之后插入区间[new_it1, new_it2)的数据
+|merge()|两个有序的列表进行合并|
+|remove(i)|删除列表中所有的i，复杂度为线性时间|
+|sort()|排序,N个元素的复杂度为NlogN|
+|splice(pos, list<T,Alloc>x)|将链表x的内容插入到pos的前面，x将为空，时间复杂度为固定时间
+|unique()|相邻的相同值压缩为单个值，时间复杂度为线性时间
+**实例**
+```
+#include<iostream>
+#include<list>
+#include<iterator>
+#include<algorithm>
+using namespace std;
+void print(int n){
+	cout<<n<<" ";
+}
+int main(){
+	cout<<"------初始化同一个值--------"<<endl;
+	list<int> one(4,5);//4个5
+	for_each(one.begin(),one.end(),print);
+	cout<<endl;
+	cout<<"-------用数组来初始化-------"<<endl;
+	list<int> two;
+	int stuff[5]={1,2,4,2,40};
+	two.insert(two.end(), stuff, stuff+5);
+	for_each(two.begin(),two.end(),print);
+	cout<<endl;
+	cout<<"-----insert用法---------"<<endl;
+	list<int> three(two);
+	three.insert(three.begin(), one.begin(), one.end());
+	for_each(three.begin(),three.end(),print);
+	cout<<endl;
+	cout<<"-----remove用法---------"<<endl;
+	three.remove(2);//删除list中所有的2
+	for_each(three.begin(),three.end(),print);
+	cout<<endl;
+	cout<<"-----unique用法---------"<<endl;
+	three.unique();//删除list中所有的2
+	for_each(three.begin(),three.end(),print);
+	cout<<endl;
+	cout<<"------sort用法--------"<<endl;
+	three.sort();
+	two.sort();
+	for_each(three.begin(),three.end(),print);
+	cout<<endl;
+	for_each(two.begin(),two.end(),print);
+	cout<<endl;
+	cout<<"------merge用法--------"<<endl;
+	three.merge(two);
+	for_each(three.begin(),three.end(),print);
+	cout<<endl;
+	return 0;
+}
+```
+![这里写图片描述](http://img.blog.csdn.net/2018030620165192?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+###queue队列
+**操作**
+|操作|描述|
+|---|---|
+|empty()|如果队列为空，返回true，否则返回false|
+|size()|返回队列的元素大小|
+|front()|返回指向队首元素的引用|
+|back()|返回指向队尾元素的引用|
+|push(x)|在队尾插入元素x|
+|pop()|删除队首元素|
+
+**实例**
+```
+#include<iostream>
+#include<queue>
+using namespace std;
+int main(){
+	queue<int>que;
+	que.push(7);
+	que.push(1);
+	que.push(8);//加入到队尾
+	que.pop();//删除队首
+	if(!que.empty()){
+		cout<<"queue size:"<<que.size()<<endl;
+		cout<<"not empty"<<endl;
+	}
+	int target = 9;
+	while(!que.empty()){
+		if(que.front()==target){
+			cout<<"found"<<endl;
+		}
+
+		que.pop();
+
+	}
+	cout<<que.size()<<endl;
+	cout<<"queue front:"<<que.front()<<endl;//队首
+	cout<<"queue back:"<<que.back()<<endl;//队尾
+	return 0;
+}
+```
+![这里写图片描述](http://img.blog.csdn.net/20180306201638308?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+
+###priority_queue优先队列
+**操作**
+|操作|描述|
+|---|---|
+|empty()|如果队列为空，返回true，否则返回false|
+|size()|返回队列的元素大小|
+|top()|队首元素，当前值最大的那个数|
+|push(x)|在队尾插入元素x|
+|pop()|删除队首元素|
+**实例**
+```
+#include<iostream>
+#include<queue>
+using namespace std;
+void print(int n){
+	cout<<n<<" ";
+}
+int main(){
+	priority_queue<int> pr;
+
+	cout<<"----降序------"<<endl;
+	pr.push(100);
+	pr.push(1);
+	pr.push(30);
+	pr.push(7);
+	int size = pr.size();
+//	for(int i=0;i<size;i++){
+//		cout<<pr.top()<<" ";
+//		pr.pop();
+//	}
+//	cout<<endl;
+	while(!pr.empty()){
+		cout<<pr.top()<<" ";
+		pr.pop();
+	}
+	cout<<endl;
+	cout<<"----升序------"<<endl;
+	priority_queue<int, vector<int>, greater<int> > pr1;
+	pr1.push(100);
+	pr1.push(1);
+	pr1.push(30);
+	pr1.push(7);
+	size = pr1.size();
+	for(int i=0;i<size;i++){
+		cout<<pr1.top()<<" ";
+		pr1.pop();
+	}
+	cout<<endl;
+	return 0;
+}
+```
+![这里写图片描述](http://img.blog.csdn.net/20180306201702868?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+###stack栈
+**操作**
+|操作|描述|
+|---|---|
+|empty()|如果队列为空，返回true，否则返回false|
+|size()|返回队列的元素大小|
+|top()|返回指向栈顶元素的引用|
+|push(x)|在栈顶部插入x|
+|pop()|删除栈顶元素|
+**实例**
+```
+#include<iostream>
+#include<stack>
+using namespace std;
+
+int main(){
+	stack<int> s;
+	s.push(100);
+	s.push(1);
+	s.push(30);
+	s.push(7);
+	int size = s.size();
+//	for(int i=0;i<size;i++){
+//		cout<<s.top()<<" ";//先进后出
+//		s.pop();
+//	}
+	while(!s.empty()){
+		cout<<s.top()<<" ";
+		s.pop();
+	}
+	cout<<endl;
+
+	return 0;
+}
+```
+![这里写图片描述](http://img.blog.csdn.net/20180306201717349?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+###set集合
+
+**实例**
+```
+#include<iostream>
+#include<set>
+#include<string>
+#include<algorithm>
+#include<iterator>
+using namespace std;
+void print(string str){
+	cout<<str<<" ";
+}
+int main(){
+	set<string> C;
+	const int N = 3;
+	cout<<"------赋值，（去重，排序）---------"<<endl;
+	string str1[N] = {"bbb","ccc","aaa"};
+	string str2[N] = {"ggg","aaa","vvv"};
+	set<string> setA(str1, str1+N);
+	set<string> setB(str2, str2+N);
+	for_each(setA.begin(),setA.end(),print);
+	cout<<endl;
+	for_each(setB.begin(),setB.end(),print);
+	cout<<endl;
+	cout<<"-------并集--------"<<endl;
+	set<string> C1;
+	set_union(setA.begin(),setA.end(),setB.begin(),setB.end(),insert_iterator<set<string> >(C1,C1.begin()));
+	for_each(C1.begin(),C1.end(),print);
+	cout<<endl;
+	cout<<"-------取区间范围[bbb,ggg]--------"<<endl;
+	for_each(C1.lower_bound("bbb"),C1.upper_bound("ggg"),print);
+	cout<<endl;
+	cout<<"-------交集--------"<<endl;
+	set<string> C2;
+	set_intersection(setA.begin(),setA.end(),setB.begin(),setB.end(), insert_iterator<set<string> >(C2,C2.begin()));
+	for_each(C2.begin(),C2.end(),print);
+	cout<<endl;
+	cout<<"--------差集-------"<<endl;
+	set<string> C3;
+	set_difference(setA.begin(),setA.end(),setB.begin(),setB.end(), insert_iterator<set<string> >(C3,C3.begin()));
+	for_each(C3.begin(),C3.end(),print);
+	cout<<endl;
+	return 0;
+}
+```
+![这里写图片描述](http://img.blog.csdn.net/20180306201730130?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+###map字典
+
+**实例**
+```
+#include<iostream>
+#include<map>
+#include<algorithm>
+
+using namespace std;
+
+int main(){
+	map<int, string>map1;
+	map1.insert(map<int,string>::value_type(1,"aaa"));
+	map1.insert(map<int,string>::value_type(4,"bbb"));
+	map1.insert(map<int,string>::value_type(2,"ccc"));
+	map1.insert(pair<int,string>(8,"ccc"));
+	map1[0] = "gggg"; //int:0, string:"gggg"
+	map<int, string>::iterator iter;
+	int size = map1.size();
+    cout<<"size: "<<map1.size()<<endl;
+    for(iter = map1.begin(); iter != map1.end(); iter++)  
+		cout<<iter->first<<" "<<iter->second<<endl;
+	for(int i=1;i<size;i++){
+		cout<<map1[i]<<" ";
+	}
+	cout<<endl;
+	iter=map1.find(0);//根据键值查找到迭代器
+	if(iter!=map1.end())
+		cout<<iter->second<<endl;
+	else
+		cout<<"not found"<<endl;
+
+	cout<<map1.count(4)<<endl;//返回该键的元素数目
+	return 0;
+}
+```
+![这里写图片描述](http://img.blog.csdn.net/20180306201740437?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvaGd5YW4yNQ==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
