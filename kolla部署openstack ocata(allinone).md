@@ -25,5 +25,7 @@ dashboard访问地址 http://ens33_IPADDR/
 username admin
 password 99cloud
 ![测试成功](assets/markdown-img-paste-20180312202848181.png)
+后续的工作是ubuntu上尝试Kolla安装Ocata 单节点。
+
 参考：
 http://blog.csdn.net/dylloveyou/article/details/77148560
