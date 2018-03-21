@@ -69,6 +69,8 @@ int poll()
   1. epoll内部使用了mmap共享了用户和内核的部分空间，避免了数据的来回拷贝
   2. epoll基于事件驱动，epoll_ctl注册事件并注册callback回调函数，epoll_wait只返回发生的事件避免了像select和poll对事件的整个轮寻操作
 
-
-
 ------
+参考链接：
+https://www.cnblogs.com/creazylinux/p/7364685.html
+http://www.cnblogs.com/Anker/archive/2013/08/14/3258674.html
+https://www.zhihu.com/question/32163005
