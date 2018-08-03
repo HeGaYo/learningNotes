@@ -27,3 +27,41 @@ mv A B
 
 - 查看系统运行的所有进程
 ps -ef
+
+- 显示文件或目录
+ls -l 显示一个文件的属性以及文件所属的用户和组
+r-4 w-2 x-1
+
+- 修改权限
+chgrp
+chown
+chmod
+
+- 硬链接 软链接
+ln -s A B
+ln A B
+
+- 目录操作
+mkdir
+rmdir
+cp
+rm
+pwd 显示当前目录
+
+- 查看文件
+cat
+head
+tail
+tail -f 允许在其他进程是用的时候查看这个文件的内容。可以实时监测系统日志。
+more
+less
+nl
+file 查看文件类型
+
+- 磁盘管理
+df 列出磁盘使用量
+du 检查磁盘空间使用量
+fdisk 用于磁盘分区
+
+- 查看某个进程的端口号
+netstat -nlp | grep dnsmasq
